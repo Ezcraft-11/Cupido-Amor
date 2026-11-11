@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿De dónde nace el amor?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFF2F6; --bg2:#FFE4EE; --pink:#FF8FB1; --rose:#E84A7F; --wine:#7A1538;
+    --ink:#4A2A37; --soft:#8A6A77; --gold:#FFC857; --lav:#CDB9FF; --mint:#A8E8D4;
+    --lead:#9AA3AE; --card:#FFFFFF; --r:28px;
+    --shadow:0 10px 30px rgba(232,74,127,.15);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Nunito',system-ui,sans-serif;color:var(--ink);background:var(--bg);overflow-x:hidden;line-height:1.55;-webkit-tap-highlight-color:transparent}
+  h1,h2,h3,.fred{font-family:'Fredoka',system-ui,sans-serif}
+  button{font-family:'Fredoka',sans-serif;cursor:pointer;border:none}
+
+  /* barra de progreso */
+  #progress{position:fixed;top:0;left:0;height:6px;width:0;background:linear-gradient(90deg,var(--pink),var(--rose),var(--gold));z-index:50;border-radius:0 6px 6px 0;transition:width .1s}
+
+  /* corazones flotando de fondo */
+  .bg-hearts{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .bg-hearts span{position:absolute;bottom:-60px;font-size:22px;opacity:.35;animation:floatUp linear infinite}
+  @keyframes floatUp{to{transform:translateY(-115vh) rotate(25deg)}}
+
+  main{position:relative;z-index:1}
+  section{max-width:760px;margin:0 auto;padding:70px 20px}
+  .reveal{opacity:0;transform:translateY(30px);transition:all .8s cubic-bezier(.2,.8,.2,1)}
+  .reveal.show{opacity:1;transform:none}
+
+  .tag{display:inline-block;background:#fff;color:var(--rose);font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;padding:7px 16px;border-radius:99px;box-shadow:var(--shadow)}
+  .num{display:inline-grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--rose);color:#fff;font-family:'Fredoka';font-weight:600;font-size:20px;margin-right:12px;flex-shrink:0;box-shadow:0 6px 0 #c2325f}
+  h2{font-size:clamp(28px,6vw,40px);color:var(--wine);line-height:1.15;margin:18px 0 12px;display:flex;align-items:center;gap:0}
+  .lead{font-size:18px;color:var(--ink)}
+  .card{background:var(--card);border-radius:var(--r);padding:26px;box-shadow:var(--shadow);margin-top:22px;position:relative}
+  .hint{font-size:14px;color:var(--soft);font-weight:700;margin-top:10px;display:flex;gap:6px;align-items:center}
+  .btn{background:var(--rose);color:#fff;font-size:18px;font-weight:600;padding:14px 26px;border-radius:99px;box-shadow:0 6px 0 #b8325f;transition:transform .15s, box-shadow .15s}
+  .btn:active{transform:translateY(4px);box-shadow:0 2px 0 #b8325f}
+  .btn.ghost{background:#FFE1EC;color:var(--rose);box-shadow:0 6px 0 #f3c2d3}
+  .btn.ghost:active{box-shadow:0 2px 0 #f3c2d3}
+
+  /* HERO */
+  .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding-top:40px}
+  .hero h1{font-size:clamp(42px,11vw,76px);line-height:1.02;color:var(--wine);margin:18px 0 14px}
+  .hero h1 span{color:var(--rose)}
+  .hero p{max-width:520px;font-size:18px;margin-bottom:26px}
+  .cupid{width:min(300px,70vw);animation:bob 3.2s ease-in-out infinite;filter:drop-shadow(0 18px 20px rgba(232,74,127,.25));cursor:pointer}
+  @keyframes bob{50%{transform:translateY(-14px) rotate(-2deg)}}
+  .wingL{transform-origin:85px 105px;animation:flapL .5s ease-in-out infinite alternate}
+  .wingR{transform-origin:215px 105px;animation:flapR .5s ease-in-out infinite alternate}
+  @keyframes flapL{to{transform:rotate(12deg)}}
+  @keyframes flapR{to{transform:rotate(-12deg)}}
+  .blink{animation:blink 4s infinite}
+  @keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+  .speech{background:#fff;padding:10px 18px;border-radius:20px;font-weight:700;color:var(--rose);box-shadow:var(--shadow);margin-bottom:6px;min-height:44px;transition:all .3s}
+  .scroll-cue{margin-top:28px;font-size:14px;color:var(--soft);font-weight:700;animation:bob 2s infinite}
+
+  /* Sección 1: papás */
+  .parents{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-top:16px}
+  .god{border-radius:24px;padding:18px 10px;text-align:center;cursor:pointer;transition:transform .3s;user-select:none;min-height:170px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+  .god:active{transform:scale(.96)}
+  .god .ico{font-size:44px;transition:transform .5s}
+  .god.on .ico{transform:rotate(360deg) scale(1.15)}
+  .god b{font-family:'Fredoka';font-size:19px;display:block;margin-top:6px}
+  .god small{display:block;font-weight:700;opacity:.8;margin-top:2px}
+  .god .q{font-size:13px;font-weight:800;opacity:.65;margin-top:6px}
+  .afro{background:#FFE1EC;color:var(--rose)}
+  .ares{background:#E4E9F1;color:#3D4A5C}
+  .plus{font-family:'Fredoka';font-size:30px;color:var(--pink)}
+  .eros-result{margin-top:18px;text-align:center;max-height:0;overflow:hidden;opacity:0;transition:all .7s}
+  .eros-result.show{max-height:400px;opacity:1}
+  .eros-result .big{font-size:60px;animation:pop .6s}
+  @keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+  .pill{display:inline-block;background:var(--wine);color:#fff;border-radius:99px;padding:8px 18px;font-family:'Fredoka';font-weight:500;margin:8px 0}
+
+  /* Sección 2: mezcla */
+  .mixer{text-align:center}
+  .mix-heart{font-size:90px;display:inline-block;transition:transform .3s, filter .3s;margin:10px 0}
+  .range-labels{display:flex;justify-content:space-between;font-weight:800;font-size:14px;margin-top:6px}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:16px;border-radius:99px;background:linear-gradient(90deg,#C9CFD8,#FF8FB1 50%,#FFC857);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:38px;height:38px;border-radius:50%;background:#fff;border:5px solid var(--rose);box-shadow:var(--shadow);cursor:grab}
+  input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;background:#fff;border:5px solid var(--rose);cursor:grab}
+  .mix-msg{margin-top:16px;font-weight:700;min-height:52px;font-size:17px}
+  .flips{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+  .flip{perspective:600px;height:86px;cursor:pointer}
+  .flip-in{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+  .flip.on .flip-in{transform:rotateY(180deg)}
+  .flip-f,.flip-b{position:absolute;inset:0;border-radius:20px;display:grid;place-items:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;font-family:'Fredoka';font-weight:600;font-size:16px;text-align:center;padding:6px}
+  .flip-f{background:#EEF0F4;color:#5B6472}
+  .flip-b{background:#FFE7A8;color:#8A5A00;transform:rotateY(180deg)}
+  .quote{font-style:italic;font-weight:600;color:var(--wine);text-align:center;font-size:19px;margin-top:18px}
+
+  /* Sección 3: vaso */
+  .poet{background:linear-gradient(135deg,#5A1030,#A3224F);color:#fff}
+  .poet .who{color:var(--gold);font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase}
+  .poet p.big{font-family:'Fredoka';font-size:22px;margin:10px 0 4px}
+  .glass-wrap{display:flex;gap:22px;align-items:center;margin-top:18px;flex-wrap:wrap;justify-content:center}
+  .glass{width:110px;height:150px;border:5px solid #fff;border-top:none;border-radius:0 0 26px 26px;position:relative;overflow:hidden;background:rgba(255,255,255,.08)}
+  .water{position:absolute;bottom:0;left:0;right:0;height:0;background:linear-gradient(#8FD3FF,#4FA3E0);transition:height 1s ease}
+  .water::before{content:"";position:absolute;top:-8px;left:-20%;width:140%;height:16px;background:#8FD3FF;border-radius:50%}
+  .crack{position:absolute;bottom:4px;left:50%;width:8px;height:8px;background:#5A1030;border-radius:50%;transform:translateX(-50%)}
+  .glass-txt{flex:1;min-width:200px}
+  .glass-txt .count{font-family:'Fredoka';font-size:18px;color:var(--gold);margin:8px 0}
+  .poet .btn{background:#fff;color:var(--rose);box-shadow:0 6px 0 #f3a9c3}
+
+  /* Sección 4: flechas */
+  .arrows-info{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+  .arrow-card{border-radius:22px;padding:16px;text-align:center}
+  .arrow-card .a{font-size:34px}
+  .arrow-card b{font-family:'Fredoka';display:block;font-size:17px}
+  .gold{background:#FFF1C9;color:#8A5A00}
+  .leadc{background:#ECEEF2;color:#4E5663}
+  .arena{display:flex;justify-content:space-around;align-items:flex-end;margin:24px 0 10px;gap:10px}
+  .person{text-align:center;width:46%}
+  .face{width:96px;height:96px;border-radius:50%;margin:0 auto;display:grid;place-items:center;font-size:52px;background:#FFE1EC;position:relative;transition:transform .3s}
+  .face.hit{animation:hit .5s}
+  @keyframes hit{30%{transform:scale(.85) rotate(-8deg)}70%{transform:scale(1.1) rotate(5deg)}}
+  .person .name{font-family:'Fredoka';font-weight:600;margin-top:8px}
+  .person .res{font-weight:800;font-size:14px;min-height:22px}
+  .flying{position:fixed;font-size:34px;z-index:60;pointer-events:none;transition:all .7s cubic-bezier(.3,.7,.3,1)}
+  .outcome{border-radius:22px;padding:18px;margin-top:14px;display:none;animation:pop .5s}
+  .outcome.show{display:block}
+  .phone{width:200px;margin:12px auto 4px;background:#2A1A22;border-radius:26px;padding:12px}
+  .screen{background:#FFF7F3;border-radius:16px;padding:14px 12px;min-height:150px;font-size:14px}
+  .bubble{background:var(--rose);color:#fff;border-radius:16px 16px 4px 16px;padding:8px 12px;margin-left:auto;width:fit-content;font-weight:700}
+  .seen{text-align:right;color:#8a93a0;font-size:12px;margin-top:4px;opacity:0;transition:opacity .4s}
+  .seen.on{opacity:1}
+  .ghostie{font-size:40px;text-align:center;margin-top:10px;opacity:0;transition:all .8s}
+  .ghostie.on{opacity:.9;animation:ghosty 1.6s ease-in-out infinite}
+  @keyframes ghosty{50%{transform:translateY(-6px)}}
+  .tips{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  .tip{background:#fff;border-radius:20px;padding:14px;box-shadow:var(--shadow);font-weight:700;font-size:15px}
+  .tip span{font-size:26px;display:block}
+
+  /* Quiz */
+  .quiz-card{text-align:center;min-height:270px;display:flex;flex-direction:column;justify-content:center}
+  .q-counter{font-weight:800;color:var(--soft);font-size:14px}
+  .q-text{font-family:'Fredoka';font-size:clamp(21px,5vw,26px);color:var(--wine);margin:14px 0 20px;line-height:1.25}
+  .q-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .q-btns .btn{min-width:150px}
+  .q-feed{margin-top:16px;font-weight:700;min-height:48px}
+  .q-feed.ok{color:#1E8A68}.q-feed.no{color:var(--rose)}
+  .hearts-score{font-size:26px;letter-spacing:4px;margin-top:8px}
+
+  /* comparación */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+  .col{border-radius:24px;padding:18px}
+  .col h3{font-size:20px;margin-bottom:8px}
+  .col ul{list-style:none}
+  .col li{margin:8px 0;font-weight:600;font-size:15px;padding-left:24px;position:relative}
+  .col li::before{position:absolute;left:0}
+  .bad{background:#F1EEF0;color:#4E4249}.bad li::before{content:"✕";color:#9AA3AE;font-weight:900}
+  .good{background:linear-gradient(135deg,#FF7AA5,#E84A7F);color:#fff}.good li::before{content:"♥";color:var(--gold)}
+  .big-idea{text-align:center;font-family:'Fredoka';font-size:clamp(24px,6vw,32px);color:var(--wine);line-height:1.2;margin-top:28px}
+  .big-idea em{color:var(--rose);font-style:normal}
+  .help{background:#EAF8F3;border:3px dashed var(--mint);border-radius:22px;padding:16px;margin-top:22px;font-weight:600;font-size:15px}
+  .help b{color:#1E7A5E}
+
+  /* Tu turno */
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+  .chip{background:#FFE1EC;color:var(--rose);border-radius:99px;padding:8px 14px;font-weight:700;font-size:14px;font-family:'Nunito'}
+  textarea{width:100%;border:3px solid #FFD0E0;border-radius:20px;padding:14px;font-family:'Nunito';font-size:17px;resize:none;outline:none;color:var(--ink);background:#FFFBFD}
+  textarea:focus{border-color:var(--pink)}
+  .my-heart{display:none;margin:22px auto 0;width:min(320px,85vw);position:relative;animation:pop .7s}
+  .my-heart.show{display:block}
+  .my-heart svg{width:100%;display:block}
+  .my-heart p{position:absolute;top:34%;left:20%;right:20%;text-align:center;color:#fff;font-family:'Fredoka';font-weight:500;font-size:17px;line-height:1.25;max-height:52%;overflow:hidden}
+
+  footer{text-align:center;padding:50px 20px 70px;background:linear-gradient(135deg,#5A1030,#A3224F);color:#fff;border-radius:40px 40px 0 0;margin-top:40px;position:relative;z-index:1}
+  footer .final{font-family:'Fredoka';font-size:clamp(24px,6vw,34px);line-height:1.2}
+  footer .final span{color:var(--gold)}
+  footer .author{font-family:'Fredoka';font-weight:600;font-size:18px;margin-top:22px}
+  footer .src{font-size:13px;opacity:.75;margin-top:6px}
+
+  /* partículas al tocar */
+  .pop-heart{position:fixed;pointer-events:none;z-index:70;font-size:22px;animation:burst 1s ease-out forwards}
+  @keyframes burst{to{transform:translate(var(--dx),var(--dy)) scale(.4) rotate(var(--rot));opacity:0}}
+
+  @media (max-width:520px){
+    .parents{grid-template-columns:1fr 1fr}
+    .plus{display:none}
+    .flips{grid-template-columns:1fr}
+    .flip{height:64px}
+    .compare,.tips{grid-template-columns:1fr}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div class="bg-hearts" id="bgHearts"></div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="speech" id="speech">¡Hola! Tócame 💘</div>
+    <svg class="cupid" id="cupid" viewBox="0 0 300 260" aria-label="Cupido como corazón con alitas">
+      <ellipse cx="150" cy="30" rx="44" ry="10" fill="none" stroke="#FFC857" stroke-width="6"/>
+      <g class="wingL"><path d="M95,100 C60,40 10,50 8,85 C25,82 32,88 36,95 C14,100 8,118 12,132 C28,122 40,124 48,130 C38,142 40,156 48,166 C66,148 84,138 100,132 Z" fill="#fff" stroke="#FFC2D6" stroke-width="3"/></g>
+      <g class="wingR"><path d="M205,100 C240,40 290,50 292,85 C275,82 268,88 264,95 C286,100 292,118 288,132 C272,122 260,124 252,130 C262,142 260,156 252,166 C234,148 216,138 200,132 Z" fill="#fff" stroke="#FFC2D6" stroke-width="3"/></g>
+      <line x1="40" y1="215" x2="262" y2="62" stroke="#FFC857" stroke-width="6" stroke-linecap="round"/>
+      <polygon points="276,52 252,58 266,76" fill="#FFC857"/>
+      <path d="M150,230 C70,180 55,120 90,85 C115,62 145,72 150,95 C155,72 185,62 210,85 C245,120 230,180 150,230 Z" fill="#FF7AA5" stroke="#fff" stroke-width="5"/>
+      <ellipse cx="110" cy="105" rx="14" ry="8" fill="#fff" opacity=".55" transform="rotate(-30 110 105)"/>
+      <g class="blink" style="transform-origin:150px 135px"><ellipse cx="128" cy="135" rx="7" ry="9" fill="#4A2A37"/><ellipse cx="172" cy="135" rx="7" ry="9" fill="#4A2A37"/><circle cx="130" cy="131" r="2.5" fill="#fff"/><circle cx="174" cy="131" r="2.5" fill="#fff"/></g>
+      <ellipse cx="112" cy="155" rx="11" ry="6" fill="#E84A7F" opacity=".5"/><ellipse cx="188" cy="155" rx="11" ry="6" fill="#E84A7F" opacity=".5"/>
+      <path d="M140,155 Q150,166 160,155" fill="none" stroke="#4A2A37" stroke-width="4" stroke-linecap="round"/>
+      <polygon points="40,215 22,212 30,230" fill="#E84A7F"/><polygon points="40,215 44,234 30,230" fill="#FFC2D6"/>
+    </svg>
+    <span class="tag" style="margin-top:14px">Lectura · De lo que sabes</span>
+    <h1>¿De dónde nace el <span>amor</span>?</h1>
+    <p>Un viaje tiernito (pero honesto) por mitos, filosofía y poesía para entender por qué el amor a veces duele… y cómo lograr que no.</p>
+    <button class="btn" onclick="document.getElementById('s1').scrollIntoView()">Comenzar ♡</button>
+    <div class="scroll-cue">✨ Toca la pantalla para soltar corazones ✨</div>
+  </section>
+
+  <!-- 1. CUPIDO -->
+  <section id="s1" class="reveal">
+    <h2><span class="num">1</span>Cupido: ¿tan inocente?</h2>
+    <p class="lead">Todos lo imaginamos como un bebé con alitas, arco y flechas: tan decorativo como el adornito de un pastel. Pero su “acta de nacimiento” esconde una contradicción.</p>
+    <div class="card">
+      <p style="font-weight:800;color:var(--wine)">Toca a sus papás para descubrir de dónde viene 👇</p>
+      <div class="parents">
+        <div class="god afro" id="afro" onclick="reveal('afro')">
+          <div class="ico">🌹</div><b>Afrodita</b><small class="q">¿Quién soy?</small>
+        </div>
+        <div class="plus">+</div>
+        <div class="god ares" id="ares" onclick="reveal('ares')">
+          <div class="ico">🛡️</div><b>Ares</b><small class="q">¿Quién soy?</small>
+        </div>
+      </div>
+      <div class="eros-result" id="erosResult">
+        <div class="big">💘</div>
+        <span class="pill">Eros (Cupido) = belleza + guerra</span>
+        <p>Su origen ya lo explica todo: el amor puede ser hermoso y, al mismo tiempo, una batalla. No es un chisme familiar, ¡es una definición!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. PLATÓN -->
+  <section id="s2" class="reveal">
+    <h2><span class="num">2</span>Platón y <i>&nbsp;El banquete</i></h2>
+    <p class="lead">Para Platón, Eros nace de <b>Penía</b> (la Pobreza) y <b>Poros</b> (la Riqueza). O sea: el amor es una mezcla de lo que nos falta y lo que tenemos.</p>
+    <div class="card mixer">
+      <p style="font-weight:800;color:var(--wine)">Mezcla los ingredientes del amor 🧪</p>
+      <div class="mix-heart" id="mixHeart">💗</div>
+      <input type="range" id="mix" min="0" max="100" value="50" aria-label="De carencia a abundancia">
+      <div class="range-labels"><span style="color:#6B7280">🥣 Penía · carencia</span><span style="color:#C98A12">Poros · abundancia 💰</span></div>
+      <div class="mix-msg" id="mixMsg"></div>
+    </div>
+    <div class="card">
+      <p style="font-weight:800;color:var(--wine)">El amor junta opuestos. Toca cada tarjeta 🔄</p>
+      <div class="flips">
+        <div class="flip" onclick="this.classList.toggle('on')"><div class="flip-in"><div class="flip-f">Carencia 🥺</div><div class="flip-b">Abundancia 🤩</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('on')"><div class="flip-in"><div class="flip-f">Hambre 😩</div><div class="flip-b">Saciedad 😌</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('on')"><div class="flip-in"><div class="flip-f">Dolor 💔</div><div class="flip-b">Placer 💞</div></div></div>
+      </div>
+      <p class="quote">Deseamos porque nos falta algo; buscamos porque aún no lo tenemos. Por eso el amor es una persecución, no un descanso.</p>
+    </div>
+  </section>
+
+  <!-- 3. VILLAURRUTIA -->
+  <section id="s3" class="reveal">
+    <div class="card poet">
+      <div class="who">✒️ Xavier Villaurrutia · poeta mexicano (1903–1950)</div>
+      <p class="big">Comparó el amor con una sed que nunca se apaga y un hambre que nunca se llena.</p>
+      <p style="opacity:.85">Intenta llenar el vaso del deseo… a ver qué pasa 👀</p>
+      <div class="glass-wrap">
+        <div class="glass"><div class="water" id="water"></div><div class="crack"></div></div>
+        <div class="glass-txt">
+          <button class="btn" id="fillBtn">Darle agua 💧</button>
+          <div class="count" id="fillCount">Intentos: 0</div>
+          <p id="fillMsg" style="font-weight:600"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. FLECHAS -->
+  <section id="s4" class="reveal">
+    <h2><span class="num">3</span>Las dos flechas de Cupido</h2>
+    <p class="lead">Según el mito, Cupido no juega limpio: carga dos tipos de flechas.</p>
+    <div class="arrows-info">
+      <div class="arrow-card gold"><div class="a">🏹✨</div><b>Punta de oro</b>provoca amor inmediato</div>
+      <div class="arrow-card leadc"><div class="a">🏹🪨</div><b>Punta de plomo</b>provoca rechazo</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <p style="font-weight:800;color:var(--wine)">Juego: ¡deja que Cupido dispare! 🎯</p>
+      <div class="arena">
+        <div class="person"><div class="face" id="faceA">🙂</div><div class="name">Tú</div><div class="res" id="resA"></div></div>
+        <div class="person"><div class="face" id="faceB" style="background:#E6E0FF">🙂</div><div class="name">La otra persona</div><div class="res" id="resB"></div></div>
+      </div>
+      <button class="btn" id="shootBtn">¡Lanzar flechas! 🏹</button>
+      <div class="outcome" id="outcome"></div>
+    </div>
+    <h3 class="fred" style="color:var(--wine);margin-top:30px;font-size:22px">Si te hicieron ghosting… 👻</h3>
+    <div class="tips">
+      <div class="tip"><span>🌷</span>No mide lo que vales. Habla más de la otra persona que de ti.</div>
+      <div class="tip"><span>🚪</span>No persigas a quien se esconde. El silencio también es una respuesta.</div>
+      <div class="tip"><span>🫂</span>Platícalo con alguien de confianza. Guardarlo pesa más.</div>
+      <div class="tip"><span>🎧</span>Haz hoy algo que te guste. Tu vida no se pone en pausa.</div>
+    </div>
+  </section>
+
+  <!-- 5. QUIZ -->
+  <section id="s5" class="reveal">
+    <h2><span class="num">4</span>¿Maduro o inmaduro?</h2>
+    <p class="lead">Lo importante no es la flecha, sino lo que hacemos <b>después</b> de que nos da. ¿Sabes reconocer un amor sano?</p>
+    <div class="card quiz-card" id="quiz"></div>
+  </section>
+
+  <!-- 6. COMPARACIÓN -->
+  <section id="s6" class="reveal">
+    <h2><span class="num">5</span>Las dos formas de amar</h2>
+    <div class="compare">
+      <div class="col bad"><h3>💔 Amor inmaduro</h3><ul>
+        <li>Confunde intensidad con verdad</li>
+        <li>Cree que si duele, importa</li>
+        <li>Hace de la carencia un espectáculo</li>
+        <li>Convierte la ansiedad en entretenimiento</li>
+      </ul></div>
+      <div class="col good"><h3>💗 Amor maduro</h3><ul>
+        <li>No necesita doler para ser real</li>
+        <li>No humilla, no suplica, no encadena</li>
+        <li>Te deja ser tú</li>
+        <li>Elige cada día no herir ni dejarse herir</li>
+      </ul></div>
+    </div>
+    <p class="big-idea">El amor sano no es la guerra de Ares con perfume de Afrodita: es una <em>decisión diaria</em>.</p>
+    <div class="help">🫶 Si alguien te controla, te humilla o te da miedo, <b>no es amor y no es tu culpa</b>. Platícalo con un adulto de confianza, con orientación de tu escuela o llama gratis a la <b>Línea de la Vida: 800 911 2000</b> (24 horas).</div>
+  </section>
+
+  <!-- 7. TU TURNO -->
+  <section id="s7" class="reveal">
+    <h2>💌 Tu turno</h2>
+    <p class="lead">Completa la frase. Puedes inspirarte en las ideas de abajo.</p>
+    <div class="card">
+      <p class="fred" style="font-size:20px;color:var(--wine);margin-bottom:8px">Para mí, el amor sano es…</p>
+      <div class="chips">
+        <button class="chip">sentirme en paz</button>
+        <button class="chip">poder ser yo</button>
+        <button class="chip">cuidarnos sin controlarnos</button>
+        <button class="chip">hablar sin miedo</button>
+      </div>
+      <textarea id="myText" rows="3" maxlength="110" placeholder="Escribe aquí…"></textarea>
+      <div style="text-align:center;margin-top:14px"><button class="btn" id="saveBtn">Guardar en mi corazón 💖</button></div>
+      <div class="my-heart" id="myHeart">
+        <svg viewBox="0 0 300 270"><path d="M150,260 C40,190 10,120 50,70 C85,28 135,40 150,80 C165,40 215,28 250,70 C290,120 260,190 150,260 Z" fill="#E84A7F"/><ellipse cx="85" cy="85" rx="20" ry="10" fill="#fff" opacity=".45" transform="rotate(-35 85 85)"/></svg>
+        <p id="myHeartText"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p class="final">Si el amor te destruye a diario,<br><span>no es amor: es dependencia.</span></p>
+  <p style="margin-top:12px;opacity:.9">Ama bonito. Empezando por ti. 💗</p>
+  <p class="author">Carlos Ezequiel Ramírez Tapia - 1er semestre</p>
+  <p class="src">Fuente: Zagal, H. (2026). ¿De dónde nace el amor? Siminforma.</p>
+</footer>
+
+<script>
+/* corazones de fondo */
+const bg=document.getElementById('bgHearts');
+const sym=['💗','💕','💖','♡','💞'];
+for(let i=0;i<16;i++){const s=document.createElement('span');s.textContent=sym[i%sym.length];s.style.left=Math.random()*100+'%';s.style.fontSize=(14+Math.random()*20)+'px';s.style.animationDuration=(12+Math.random()*14)+'s';s.style.animationDelay=(-Math.random()*20)+'s';bg.appendChild(s);}
+
+/* barra de progreso */
+addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progress').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';},{passive:true});
+
+/* aparecer al hacer scroll */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');io.unobserve(e.target);}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* explosión de corazones */
+function burst(x,y,n=8,set=['💗','💖','💕','✨']){
+  for(let i=0;i<n;i++){const h=document.createElement('div');h.className='pop-heart';h.textContent=set[Math.floor(Math.random()*set.length)];
+    const a=Math.random()*Math.PI*2,d=50+Math.random()*70;h.style.left=x-11+'px';h.style.top=y-11+'px';
+    h.style.setProperty('--dx',Math.cos(a)*d+'px');h.style.setProperty('--dy',Math.sin(a)*d-30+'px');h.style.setProperty('--rot',(Math.random()*120-60)+'deg');
+    document.body.appendChild(h);setTimeout(()=>h.remove(),1000);}
+}
+document.addEventListener('click',e=>{if(e.target.closest('button,.god,.flip,input,textarea,.cupid'))return;burst(e.clientX,e.clientY,6);});
+
+/* cupido habla */
+const lines=['¡Hola! Tócame 💘','Parezco inofensivo… 😇','…pero mis flechas pican 🏹','¿Me conoces de verdad? 👀','¡Baja y descúbrelo! ⬇️'];
+let li=0;document.getElementById('cupid').addEventListener('click',e=>{li=(li+1)%lines.length;document.getElementById('speech').textContent=lines[li];burst(e.clientX,e.clientY,10);});
+
+/* 1. papás */
+const seen={afro:false,ares:false};
+const info={afro:['Diosa de la belleza','🌹'],ares:['Dios de la guerra','⚔️']};
+function reveal(id){const el=document.getElementById(id);if(seen[id])return;seen[id]=true;el.classList.add('on');
+  el.querySelector('.q').textContent=info[id][0];el.querySelector('.ico').textContent=info[id][1];
+  const r=el.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,8,id==='afro'?['🌹','💗','✨']:['⚔️','🛡️','💥']);
+  if(seen.afro&&seen.ares)setTimeout(()=>document.getElementById('erosResult').classList.add('show'),400);}
+
+/* 2. mezclador */
+const mix=document.getElementById('mix'),mh=document.getElementById('mixHeart'),mm=document.getElementById('mixMsg');
+function upMix(){const v=+mix.value;
+  if(v<25){mh.textContent='🥺';mm.innerHTML='<span style="color:#6B7280">Pura carencia: todo se vuelve ansiedad y hambre. Así el amor se siente como un hueco.</span>';}
+  else if(v>75){mh.textContent='😴';mm.innerHTML='<span style="color:#C98A12">Pura abundancia: si ya tienes todo, no buscas nada… y el deseo se apaga.</span>';}
+  else{mh.textContent='💗';mm.innerHTML='<span style="color:#E84A7F">¡Eso es Eros! Un poquito de falta y un poquito de riqueza: deseamos lo que todavía no tenemos.</span>';}
+  const s=0.8+(1-Math.abs(v-50)/50)*0.5;mh.style.transform='scale('+s+')';}
+mix.addEventListener('input',upMix);upMix();
+
+/* 3. vaso que nunca se llena */
+let tries=0,busy=false;const water=document.getElementById('water');
+const fmsgs=['Mmm… se vació otra vez 🤔','Pide más y más… y no se sacia 😵‍💫','¿Ves? Si buscas que otra persona llene ese vacío, nunca será suficiente. Primero cuídate y quiérete tú 💗'];
+document.getElementById('fillBtn').addEventListener('click',()=>{if(busy)return;busy=true;tries++;
+  document.getElementById('fillCount').textContent='Intentos: '+tries;water.style.height='85%';
+  setTimeout(()=>{water.style.height='6%';document.getElementById('fillMsg').textContent=fmsgs[Math.min(tries-1,2)];busy=false;},1300);});
+
+/* 4. juego de flechas */
+const out=document.getElementById('outcome');
+document.getElementById('shootBtn').addEventListener('click',e=>{
+  const btn=e.currentTarget;btn.disabled=true;out.className='outcome';
+  const ra=Math.random()<.7?'oro':'plomo', rb=Math.random()<.5?'oro':'plomo';
+  ['A','B'].forEach((p,i)=>{const r=i?rb:ra;const face=document.getElementById('face'+p);document.getElementById('res'+p).textContent='';
+    const b=btn.getBoundingClientRect(),f=face.getBoundingClientRect();
+    const ar=document.createElement('div');ar.className='flying';ar.textContent=r==='oro'?'💛':'🩶';
+    ar.style.left=b.left+b.width/2-17+'px';ar.style.top=b.top-10+'px';document.body.appendChild(ar);
+    setTimeout(()=>{ar.style.left=f.left+f.width/2-17+'px';ar.style.top=f.top+f.height/2-17+'px';},30+i*250);
+    setTimeout(()=>{ar.remove();face.classList.remove('hit');void face.offsetWidth;face.classList.add('hit');
+      face.textContent=r==='oro'?'🥰':'😒';const res=document.getElementById('res'+p);
+      res.textContent=r==='oro'?'✨ Flecha de oro':'🪨 Flecha de plomo';res.style.color=r==='oro'?'#C98A12':'#6B7280';
+      if(r==='oro')burst(f.left+f.width/2,f.top+f.height/2,6);},780+i*250);
+  });
+  setTimeout(()=>{showOutcome(ra,rb);btn.disabled=false;btn.textContent='Otra vez 🏹';},1400);
+});
+function showOutcome(a,b){let h='';
+  if(a==='oro'&&b==='oro'){out.style.background='#FFE1EC';h='<h3 class="fred" style="color:#E84A7F">¡Match! 💞</h3><p>Los dos sienten lo mismo. Ojo: la flecha solo es el inicio. Lo que sigue es construir algo sano, con respeto y confianza.</p>';}
+  else if(a==='oro'&&b==='plomo'){out.style.background='#F1EEF0';h='<h3 class="fred" style="color:#4E5663">Deseo unilateral 😶</h3><div class="phone"><div class="screen"><div class="bubble">¿Hablamos hoy? 🥺</div><div class="seen" id="seen">Visto ✓✓</div><div class="ghostie" id="ghost">👻</div></div></div><p>Tú sientes, la otra persona no. Es una relación que solo existe en tu cabeza. Hoy le llamamos <b>“visto”</b> o <b>“ghosting”</b>.</p>';
+    setTimeout(()=>{const s=document.getElementById('seen');s&&s.classList.add('on');},700);setTimeout(()=>{const g=document.getElementById('ghost');g&&g.classList.add('on');},1500);}
+  else if(a==='plomo'&&b==='oro'){out.style.background='#E6E0FF';h='<h3 class="fred" style="color:#5B47B0">Tú no sientes lo mismo 🙊</h3><p>Ser claro y amable también es amor: decir “no” a tiempo evita ilusiones y no deja a nadie en “visto”.</p>';}
+  else{out.style.background='#EAF8F3';h='<h3 class="fred" style="color:#1E7A5E">Nadie flechado 🌿</h3><p>¡Y está perfecto! No necesitas pareja para estar completo. Tus amistades, tu familia y tú también son amor.</p>';}
+  out.innerHTML=h;out.classList.add('show');}
+
+/* 5. quiz */
+const Q=[
+ ['Si no me contesta en 5 minutos, es que ya no le importo.','i','Eso es ansiedad, no amor. Cada quien tiene sus tiempos y su vida.'],
+ ['Me apoya en mis metas aunque eso signifique pasar menos tiempo juntos.','m','¡Sí! El amor maduro quiere que crezcas.'],
+ ['Los celos son la prueba de que me ama de verdad.','i','Los celos hablan de inseguridad y control, no de amor.'],
+ ['Podemos hablar de lo que nos molesta sin gritos ni humillaciones.','m','Exacto: hablar con respeto es amor maduro.'],
+ ['Si duele tanto, es porque es amor del bueno.','i','El amor inmaduro confunde intensidad con verdad. El amor sano no necesita sangrar para ser real.'],
+ ['Revisa mi celular “porque se preocupa por mí”.','i','Eso es control. La confianza no se vigila.'],
+ ['Puedo salir con mis amigos sin sentir culpa.','m','¡Claro! El amor no encadena.'],
+ ['Puedo decir “no” sin miedo a que se enoje.','m','Eso es seguridad: decidir no herir y no dejarse herir.']
+];
+let qi=0,score=0;const qz=document.getElementById('quiz');
+function drawQ(){if(qi>=Q.length){const hs='💗'.repeat(score)+'🤍'.repeat(Q.length-score);
+    const msg=score>=7?'¡Experto en amor sano! 🏆':score>=5?'¡Muy bien! Ya tienes el radar encendido 📡':'¡Vas aprendiendo! Repásalo otra vez 💪';
+    qz.innerHTML='<div class="q-counter">Resultado</div><div class="q-text">'+score+' de '+Q.length+' correctas</div><div class="hearts-score">'+hs+'</div><p style="font-weight:700;margin:14px 0">'+msg+'</p><div><button class="btn ghost" id="again">Jugar de nuevo 🔁</button></div>';
+    document.getElementById('again').onclick=()=>{qi=0;score=0;drawQ();};
+    if(score>=5){const r=qz.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,16);}return;}
+  const [t]=Q[qi];
+  qz.innerHTML='<div class="q-counter">Pregunta '+(qi+1)+' de '+Q.length+'</div><div class="q-text">“'+t+'”</div><div class="q-btns"><button class="btn" data-a="m">💗 Maduro</button><button class="btn ghost" data-a="i">💔 Inmaduro</button></div><div class="q-feed" id="qf"></div>';
+  qz.querySelectorAll('[data-a]').forEach(b=>b.onclick=ev=>{const ok=b.dataset.a===Q[qi][1];if(ok)score++;
+    const f=document.getElementById('qf');f.className='q-feed '+(ok?'ok':'no');f.textContent=(ok?'¡Correcto! ':'Mmm, no. ')+Q[qi][2];
+    qz.querySelectorAll('[data-a]').forEach(x=>x.disabled=true);if(ok)burst(ev.clientX,ev.clientY,8);
+    setTimeout(()=>{qi++;drawQ();},2300);});}
+drawQ();
+
+/* 7. tu turno */
+const ta=document.getElementById('myText');
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{ta.value=c.textContent;ta.focus();});
+document.getElementById('saveBtn').addEventListener('click',e=>{const v=ta.value.trim();if(!v){ta.placeholder='¡Escribe algo bonito primero! 💕';ta.focus();return;}
+  const h=document.getElementById('myHeart');document.getElementById('myHeartText').textContent='Para mí, el amor sano es '+v;
+  h.classList.remove('show');void h.offsetWidth;h.classList.add('show');
+  burst(e.clientX,e.clientY,18);setTimeout(()=>h.scrollIntoView({block:'center'}),100);});
+</script>
+</body>
+</html>
